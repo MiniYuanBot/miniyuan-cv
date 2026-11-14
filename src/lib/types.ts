@@ -1,12 +1,6 @@
 import type React from "react";
 
-export type IconType =
-  | "github"
-  | "linkedin"
-  | "x"
-  | "globe"
-  | "mail"
-  | "phone";
+export type IconType = "github" | "linkedin" | "x" | "globe" | "mail" | "phone";
 
 export interface ResumeData {
   name: string;
@@ -31,6 +25,20 @@ export interface ResumeData {
     time: string;
     grade: string;
     description: string | React.ReactNode;
+  }>;
+  awards: Array<{
+    title: string;
+    organization: string;
+    time: string;
+    description?: string | React.ReactNode;
+  }>;
+  research: Array<{
+    title: string;
+    organization: string;
+    role?: string;
+    time: string;
+    description: string | React.ReactNode;
+    link?: string;
   }>;
   skills: string[];
   projects: Array<{

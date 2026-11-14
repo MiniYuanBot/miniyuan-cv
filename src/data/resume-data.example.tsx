@@ -42,9 +42,7 @@ export const RESUME_DATA: ResumeData = {
       time: "20xx-xx学年 第x学期",
       grade: "95",
       description: (
-        <>
-          课程描述示例：简要写出课程内容、学到的知识与完成的项目/实验。
-        </>
+        <>课程描述示例：简要写出课程内容、学到的知识与完成的项目/实验。</>
       ),
     },
     {
@@ -53,6 +51,40 @@ export const RESUME_DATA: ResumeData = {
       time: "20xx-xx学年 第x学期",
       grade: "90",
       description: "也可以直接用字符串写课程描述。",
+    },
+  ],
+  awards: [
+    {
+      title: "示例奖学金",
+      organization: "颁发单位",
+      time: "20xx-xx学年",
+      description: "奖项简介：说明奖项级别（国家级/校级等）与获奖依据。",
+    },
+    {
+      title: "示例竞赛一等奖",
+      organization: "主办单位",
+      time: "20xx年xx月",
+    },
+  ],
+  research: [
+    {
+      title: "示例科研项目一",
+      organization: "某某大学 XX 实验室",
+      role: "研究助理",
+      time: "20xx-xx学年",
+      description: (
+        <>
+          研究内容简介：课题背景、你负责的部分、使用的方法与阶段性成果，
+          也可以用多行 / 列表形式展开描述。
+        </>
+      ),
+      link: "https://example.com/research",
+    },
+    {
+      title: "示例科研项目二",
+      organization: "课题组名称",
+      time: "20xx年",
+      description: "进行中的科研项目简介。",
     },
   ],
   skills: ["TypeScript", "React", "Tailwind CSS"],
