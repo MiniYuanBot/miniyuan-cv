@@ -8,6 +8,10 @@
 # production
 /build
 
+# generated previews and PDFs
+/tmp/
+/output/
+
 # misc
 .DS_Store
 *.pem

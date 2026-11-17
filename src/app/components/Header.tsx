@@ -1,201 +1,116 @@
-import { GlobeIcon, MailIcon, PhoneIcon } from "lucide-react";
-import Image, { type StaticImageData } from "next/image";
-import React from "react";
+import { GlobeIcon, MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
 import { Avatar } from "@/components/avatar";
-import { Button } from "@/components/ui/button";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
 import { XIcon } from "@/components/icons/x-icon";
 import { RESUME_DATA } from "@/data/resume-data";
 import type { IconType } from "@/lib/types";
 
-// Type-safe icon mapping
-const ICON_MAP: Record<IconType, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
-  github: GitHubIcon,
-  linkedin: LinkedInIcon,
-  x: XIcon,
+const CONTACT_ICONS: Record<
+  IconType,
+  ComponentType<SVGProps<SVGSVGElement>>
+> = {
   globe: GlobeIcon,
   mail: MailIcon,
   phone: PhoneIcon,
-} as const;
+  github: GitHubIcon,
+  linkedin: LinkedInIcon,
+  x: XIcon,
+};
 
-interface LocationProps {
-  location: typeof RESUME_DATA.location;
-}
-
-function Location({
-  location,
-}: LocationProps) {
-  return (
-    <div className="max-w-md items-center text-pretty font-mono text-xs text-foreground">
-      <div
-        className="inline-flex gap-x-1.5 align-baseline leading-none"
-      >
-        <GlobeIcon className="size-3" aria-hidden="true" />
-        {location}
-      </div>
-    </div>
-  );
-}
-
-interface SocialButtonProps {
-  href: string;
-  iconType: IconType;
+interface ContactLink {
   label: string;
+  text: string;
+  href: string;
+  icon: IconType;
+  external?: boolean;
+  screenOnly?: boolean;
 }
 
-function SocialButton({
-  href,
-  iconType,
-  label,
-}: SocialButtonProps) {
-  const IconComponent = ICON_MAP[iconType];
-  
-  return (
-    <Button className="size-8" variant="outline" size="icon" asChild={true}>
-      <a
-        href={href}
-        aria-label={label}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <IconComponent className="size-4" aria-hidden="true" />
-      </a>
-    </Button>
-  );
-}
-
-interface ContactButtonsProps {
-  contact: typeof RESUME_DATA.contact;
-  personalWebsiteUrl?: string;
-}
-
-function ContactButtons({
-  contact,
-  personalWebsiteUrl,
-}: ContactButtonsProps) {
-  return (
-    <ul
-      className="flex list-none gap-x-1 pt-1 font-mono text-sm text-foreground/80 print:hidden"
-      aria-label="Contact links"
-    >
-      {personalWebsiteUrl && (
-        <li>
-          <SocialButton
-            href={personalWebsiteUrl}
-            iconType="globe"
-            label="Personal website"
-          />
-        </li>
-      )}
-      {contact.email && (
-        <li>
-          <SocialButton
-            href={`mailto:${contact.email}`}
-            iconType="mail"
-            label="Email"
-          />
-        </li>
-      )}
-      {contact.tel && (
-        <li>
-          <SocialButton
-            href={`tel:${contact.tel}`}
-            iconType="phone"
-            label="Phone"
-          />
-        </li>
-      )}
-      {contact.social.map((social) => (
-        <li key={social.name}>
-          <SocialButton
-            href={social.url}
-            iconType={social.icon}
-            label={social.name}
-          />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-interface PrintContactProps {
-  contact: typeof RESUME_DATA.contact;
-  personalWebsiteUrl?: string;
-}
-
-function PrintContact({
-  contact,
-  personalWebsiteUrl,
-}: PrintContactProps) {
-  return (
-    <div className="hidden gap-x-2 font-mono text-sm text-foreground/80 print:flex print:text-[12px]">
-      {personalWebsiteUrl && (
-        <>
-          <a
-            className="underline hover:text-foreground/70"
-            href={personalWebsiteUrl}
-          >
-            {new URL(personalWebsiteUrl).hostname}
-          </a>
-          <span aria-hidden="true">/</span>
-        </>
-      )}
-      {contact.email && (
-        <>
-          <a
-            className="underline hover:text-foreground/70"
-            href={`mailto:${contact.email}`}
-          >
-            {contact.email}
-          </a>
-          <span aria-hidden="true">/</span>
-        </>
-      )}
-      {contact.tel && (
-        <a
-          className="underline hover:text-foreground/70"
-          href={`tel:${contact.tel}`}
-        >
-          {contact.tel}
-        </a>
-      )}
-    </div>
-  );
-}
-
-/**
- * Header component displaying personal information and contact details
- */
 export function Header() {
+  const { name, about, location, contact, personalWebsiteUrl } = RESUME_DATA;
+  const contactLinks: ContactLink[] = [
+    ...(personalWebsiteUrl
+      ? [
+          {
+            label: `个人网站：${new URL(personalWebsiteUrl).hostname}（在新标签页打开）`,
+            text: new URL(personalWebsiteUrl).hostname,
+            href: personalWebsiteUrl,
+            icon: "globe" as const,
+            external: true,
+          },
+        ]
+      : []),
+    ...(contact.email
+      ? [
+          {
+            label: `发送邮件至 ${contact.email}`,
+            text: contact.email,
+            href: `mailto:${contact.email}`,
+            icon: "mail" as const,
+          },
+        ]
+      : []),
+    ...(contact.tel
+      ? [
+          {
+            label: `拨打电话 ${contact.tel}`,
+            text: contact.tel,
+            href: `tel:${contact.tel}`,
+            icon: "phone" as const,
+          },
+        ]
+      : []),
+    ...contact.social.map((social) => ({
+      label: `${social.name}（在新标签页打开）`,
+      text: social.name,
+      href: social.url,
+      icon: social.icon,
+      external: true,
+      screenOnly: true,
+    })),
+  ];
+
   return (
-    <header className="flex items-center justify-between">
-      <div className="flex-1 space-y-1.5">
-        <h1 className="text-2xl font-bold" id="resume-name">
-          {RESUME_DATA.name}
-        </h1>
-        <p className="max-w-md text-pretty font-mono text-sm text-foreground/80 print:text-[12px]">
-          {RESUME_DATA.about}
-        </p>
+    <header className="resume-header">
+      <div className="resume-identity">
+        <h1 id="resume-name">{name}</h1>
+        <p className="resume-about">{about}</p>
+        {location && (
+          <p className="resume-location">
+            <MapPinIcon aria-hidden="true" />
+            {location}
+          </p>
+        )}
+        <ul className="resume-contact" aria-label="联系方式">
+          {contactLinks.map((link) => {
+            const Icon = CONTACT_ICONS[link.icon];
 
-        <Location
-          location={RESUME_DATA.location}
-        />
-
-        <ContactButtons
-          contact={RESUME_DATA.contact}
-          personalWebsiteUrl={RESUME_DATA.personalWebsiteUrl}
-        />
-
-        <PrintContact
-          contact={RESUME_DATA.contact}
-          personalWebsiteUrl={RESUME_DATA.personalWebsiteUrl}
-        />
+            return (
+              <li
+                key={link.href}
+                className={link.screenOnly ? "resume-social" : undefined}
+              >
+                <a
+                  className="resume-icon-link"
+                  href={link.href}
+                  aria-label={link.label}
+                  title={link.label}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                >
+                  <Icon aria-hidden="true" focusable="false" />
+                  <span className="resume-link-label">{link.text}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
       </div>
-
       <Avatar
-        className="w-20 h-28"
+        className="resume-portrait"
         src={RESUME_DATA.avatarUrl}
-        alt={`${RESUME_DATA.name}'s profile picture`}
+        alt={`${name}的照片`}
         fallback={RESUME_DATA.initials}
       />
     </header>

@@ -21,8 +21,8 @@ export interface ResumeData {
   };
   coursework: Array<{
     course: string;
-    badges: string[];
-    time: string;
+    badges?: string[];
+    time?: string;
     grade: string;
     description: string | React.ReactNode;
   }>;
